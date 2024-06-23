@@ -10,20 +10,23 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0eettb5-k#2n%5t7zy&l6bi%0qg_t7&4hvwnzzlq1z=+q3jq*='
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG_MODE') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -37,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'mailer',
 ]
 
 MIDDLEWARE = [
@@ -76,10 +81,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django6',
-        'USER': 'django6',
-        'PASSWORD': 'django6',
-        'HOST': 'localhost',
+        'NAME': os.getenv('PG_DATABASE_NAME'),
+        'USER': os.getenv('PG_DATABASE_USER'),
+        'PASSWORD': os.getenv('PG_DATABASE_PASSWORD'),
+        'HOST': os.getenv('PG_DATABASE_HOST'),
+        'PORT': os.getenv('PG_DATABASE_PORT')
     }
 }
 
@@ -130,3 +136,22 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CACHE_ENABLED = os.getenv('REDIS_CACHE_ENABLED') == 'True'
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv('REDIS_LOCATION'),
+        }
+    }
+
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLC = os.getenv('EMAIL_USE_TLC') == 'True'
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL') == 'True'
+
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
