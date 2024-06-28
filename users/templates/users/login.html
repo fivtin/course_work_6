@@ -1,0 +1,20 @@
+{% extends 'mailer/base.html' %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    <h3>Войти в учётную запись</h3>
+    <div class="row">
+        {% csrf_token %}
+        <div class="col-6">
+            {{ form.as_p }}
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Войти</button>
+        </div>
+        <a href="{% url 'users:reset-password' %}">Забыли пароль?</a>
+    </div>
+</form>
+{% endblock %}

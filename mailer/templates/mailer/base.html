@@ -2,7 +2,7 @@
 {% load static %}
 <html>
 <head>
-    <title>Title</title>
+    <title>Сервис рассылок</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" href="{% static 'css/uikit.min.css' %}"/>
@@ -14,22 +14,21 @@
     {% block main_menu %}
     <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
         <nav class="uk-navbar-container">
-            <div class="uk-container uk-container-xlarge" uk-navbar>
+            <div class="uk-container" uk-navbar>
+                {% if user.is_authenticated %}
                 <div class="uk-navbar-left">
                     <ul class="uk-navbar-nav">
-                        <li><a href="">Клиенты</a>
+                        <li><a href="{% url 'mailer:client_list' %}">Клиенты</a>
                             <div class="uk-navbar-dropdown">
                                 <ul class="uk-nav uk-navbar-dropdown-nav">
-                                    <li><a href="#">Список</a></li>
-                                    <li><a href="#">Добавить</a></li>
+                                    <li><a href="{% url 'mailer:client_create' %}">Добавить</a></li>
                                 </ul>
                             </div>
                         </li>
-                        <li><a href="">Сообщения</a>
+                        <li><a href="{% url 'mailer:message_list' %}">Сообщения</a>
                             <div class="uk-navbar-dropdown">
                                 <ul class="uk-nav uk-navbar-dropdown-nav">
-                                    <li><a href="#">Список</a></li>
-                                    <li><a href="#">Добавить</a></li>
+                                    <li><a href="{% url 'mailer:message_create' %}">Добавить</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -44,16 +43,23 @@
                         <li><a href="">Статистика</a></li>
                     </ul>
                 </div>
+                {% endif %}
                 <div class="uk-navbar-right">
                     <ul class="uk-navbar-nav">
-                        <li><a href="">Войти</a></li>
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'users:logout' %}">Выйти</a></li>
+                        {% else %}
+                        <li><a href="{% url 'users:register' %}">Регистрация</a></li>
+                        <li><a href="{% url 'users:login' %}">Войти</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
         </nav>
     </div>
     {% endblock %}
+    <div class="uk-container">
     {% block content %}{% endblock %}
-
+    </div>
 </body>
 </html>

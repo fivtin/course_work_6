@@ -1,0 +1,24 @@
+{% extends 'mailer/base.html' %}
+{% block content %}
+<h4>Список сообщений для рассылок</h4>
+<a href="{% url 'mailer:message_create' %}" class="uk-button uk-button-primary">Создать</a>
+<table class="uk-table uk-table-divider uk-table-striped uk-table-small">
+    <thead>
+        <tr>
+            <th>Тема</th>
+            <th>Содержимое</th>
+            <th>Удалить</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td>{{ object.subject }}</td>
+            <td>{{ object.body }}</td>
+            <td><a href="/messages/{{ object.pk }}/delete" class="uk-button uk-button-danger" uk-icon="icon: trash"></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'mailer:message_list' %}" class="uk-button  uk-button-secondary">Назад</a>
+{% endblock %}

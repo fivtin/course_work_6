@@ -1,5 +1,9 @@
 from django.db import models
 
+from config import NULLABLE
+from users.models import User
+
+
 # Create your models here.
 
 
@@ -8,6 +12,7 @@ class Client(models.Model):
     email = models.EmailField(max_length=256, unique=True, verbose_name='e-mail')
     fio = models.CharField(max_length=128, verbose_name='ф.и.о.')
     info = models.TextField(verbose_name='комментарий')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, **NULLABLE, verbose_name='владелец')
 
     class Meta:
         verbose_name = 'клиент'
@@ -22,6 +27,7 @@ class Message(models.Model):
 
     subject = models.CharField(max_length=256, verbose_name='тема')
     body = models.TextField(verbose_name='содержимое')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, **NULLABLE, verbose_name='владелец')
 
     class Meta:
         verbose_name = 'сообщение'
@@ -32,7 +38,7 @@ class Message(models.Model):
 
 
 class Newsletter(models.Model):
-    FREQUENCE_CHOICES = {
+    FREQUENCY_CHOICES = {
         (1, "dayly"),
         (2, "weekly"),
         (3, "monthly"),
@@ -45,10 +51,11 @@ class Newsletter(models.Model):
     title = models.CharField(max_length=128, verbose_name='название')
     start = models.DateTimeField(verbose_name='время начала')
     finish = models.DateTimeField(verbose_name='время окончания')
-    frequency = models.PositiveSmallIntegerField(choices=FREQUENCE_CHOICES, default=1, verbose_name='периодичность')
+    frequency = models.PositiveSmallIntegerField(choices=FREQUENCY_CHOICES, default=1, verbose_name='периодичность')
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1, verbose_name='статус')
-    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, **NULLABLE)
     clients = models.ManyToManyField(Client)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, **NULLABLE, verbose_name='владелец')
 
     class Meta:
         verbose_name = 'рассылка'
@@ -71,7 +78,7 @@ class Recipient(models.Model):
 
 
 class Attempt(models.Model):
-    newsletter = models.ForeignKey(Newsletter, on_delete=models.CASCADE, verbose_name='рассылка')
+    newsletter = models.ForeignKey(Newsletter, on_delete=models.CASCADE, **NULLABLE, verbose_name='рассылка')
     attempt_time = models.DateTimeField(auto_now_add=True, verbose_name='время попытки')
     success = models.BooleanField(default=False, verbose_name='успешно')
     response = models.TextField(verbose_name='ответ сервера')
