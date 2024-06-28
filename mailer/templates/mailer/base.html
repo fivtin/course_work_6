@@ -2,19 +2,58 @@
 {% load static %}
 <html>
 <head>
-<title>Title</title>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="{% static 'css/uikit.min.css' %}" />
-<script src="{% static 'js/uikit.min.js' %}"></script>
-<script src="{% static 'js/uikit-icons.min.js' %}"></script>
+    <title>Title</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="{% static 'css/uikit.min.css' %}"/>
+    <script src="{% static 'js/uikit.min.js' %}"></script>
+    <script src="{% static 'js/uikit-icons.min.js' %}"></script>
 </head>
 <body>
-    <div class="uk-container">
-        <div class="uk-text-center">
-             <div uk-spinner="ratio: 3"></div>
-        </div>
 
+    {% block main_menu %}
+    <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
+        <nav class="uk-navbar-container">
+            <div class="uk-container uk-container-xlarge" uk-navbar>
+                <div class="uk-navbar-left">
+                    <ul class="uk-navbar-nav">
+                        <li><a href="">Клиенты</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li><a href="#">Список</a></li>
+                                    <li><a href="#">Добавить</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li><a href="">Сообщения</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li><a href="#">Список</a></li>
+                                    <li><a href="#">Добавить</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li><a href="">Рассылки</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li><a href="#">Список</a></li>
+                                    <li><a href="#">Добавить</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li><a href="">Статистика</a></li>
+                    </ul>
+                </div>
+                <div class="uk-navbar-right">
+                    <ul class="uk-navbar-nav">
+                        <li><a href="">Войти</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </div>
+    {% endblock %}
+    {% block content %}{% endblock %}
+
 </body>
 </html>
