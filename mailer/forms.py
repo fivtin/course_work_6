@@ -59,7 +59,7 @@ class NewsletterUpdateForm(NewsletterCreateForm):
 
     class Meta:
         model = Newsletter
-        fields = ("title", "start", "finish", "frequency", "status",  "message", "clients", )
+        fields = ("title", "start", "finish", "frequency", "message", "clients", )
 
         widgets = {
             'start': forms.TextInput(attrs={'type': 'datetime-local'}),

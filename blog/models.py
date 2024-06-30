@@ -12,7 +12,8 @@ class Blog(models.Model):
     content = models.TextField( verbose_name='содержимое')
     preview = models.ImageField(upload_to='images/blog/', **NULLABLE,  verbose_name='превью')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='дата добавления')
-    is_published = models.BooleanField(default=True, verbose_name='опубликовано')
+    is_published = models.BooleanField(default=False, verbose_name='опубликовано')
+    published_at = models.DateTimeField(auto_now_add=True, verbose_name='дата публикации')
     views_count = models.PositiveIntegerField(default=0, verbose_name='количество просмотров')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, **NULLABLE, verbose_name='автор')
 

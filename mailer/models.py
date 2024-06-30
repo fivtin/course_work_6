@@ -89,3 +89,4 @@ class Attempt(models.Model):
     success = models.BooleanField(default=False, verbose_name='успешно')
     response = models.TextField(verbose_name='ответ сервера')
 
+

@@ -1,12 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import Permission
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 
+from blog.models import Blog
+from config.settings import CACHE_ENABLED
 from mailer.forms import ClientForm, MessageForm, NewsletterUpdateForm, NewsletterCreateForm
-from mailer.models import Client, Message, Newsletter
+from mailer.models import Client, Message, Newsletter, Attempt
 
 
 # Create your views here.
@@ -22,7 +24,11 @@ class ClientListView(LoginRequiredMixin, ListView):
     model = Client
 
     def get_queryset(self):
-        queryset = Client.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.has_perm('mailer.access_manager'):
+            queryset = Client.objects.all()
+        else:
+            queryset = Client.objects.filter(owner=user)
         return queryset
 
 
@@ -95,7 +101,11 @@ class MessageListView(LoginRequiredMixin, ListView):
     model = Message
 
     def get_queryset(self):
-        queryset = Message.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.has_perm('mailer.access_manager'):
+            queryset = Message.objects.all()
+        else:
+            queryset = Message.objects.filter(owner=user)
         return queryset
 
 
@@ -221,3 +231,48 @@ def action_stop(request, pk):
     newsletter.save()
     return redirect(reverse('mailer:newsletter_list'))
 
+
+class IndexPageView(TemplateView):
+    template_name = 'mailer/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if CACHE_ENABLED:
+            context['all'] = cache.get('newsletters_all')
+            if not context['all']:
+                newsletters = Newsletter.objects.all()
+                context['all'] = newsletters.count()
+                cache.set('newsletters_all', context['all'])
+                context['active'] = newsletters.filter(status=2).count()
+                cache.set('newsletters_active', context['active'])
+            else:
+                context['active'] = cache.get('newsletters_active')
+
+            context['clients'] = cache.get('clients_all')
+            if not context['clients']:
+                context['clients'] = Client.objects.count()
+                cache.set('clients_all', context['clients'])
+        else:
+            newsletters = Newsletter.objects.all()
+            context['all'] = newsletters.count()
+            context['active'] = newsletters.filter(status=2).count()
+            context['clients'] = Client.objects.count()
+
+        blogs = Blog.objects.filter(is_published=True).order_by('?')[:3]
+        context['object_list'] = blogs
+
+        return context
+
+
+class NewsletterStatisticList(TemplateView):
+    template_name = 'mailer/newsletter_statistic.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        newsletters = Newsletter.objects.filter(owner=self.request.user)
+        for n in newsletters:
+            attempts = Attempt.objects.filter(newsletter=n)
+            n.success = attempts.filter(success=True).count()
+            n.failure = attempts.filter(success=False).count()
+        context['object_list'] = newsletters
+        return context

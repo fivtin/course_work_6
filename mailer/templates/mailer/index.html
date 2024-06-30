@@ -1,6 +1,33 @@
 {% extends 'mailer/base.html'%}
 {% block content %}
-<div class="uk-container">
-    content
+{% load media %}
+{% load words_extras %}
+<div class="uk-container uk-text-center">
+
+    <h4>В нашем сервисе {{ all }} {{ all|ru_plural:"рассылка,рассылки,рассылок" }}, из них активных: {{ active }}.</h4>
+    <h4>{{ clients }} {{ clients|ru_plural:"получатель,получателя,получателей" }}.</h4>
+    <hr/>
+    <h4>Случайные блоги</h4>
+    <div class="uk-child-width-1-3@m" uk-grid>
+    {% for object in object_list %}
+    <div>
+        <div class="uk-card uk-card-default">
+            {% if object.preview %}
+            <div class="uk-card-media-top">
+                <img class="uk-align-center uk-height-medium" src="{% url_media_tag object.preview %}" alt="">
+            </div>
+            {% endif %}
+            <div class="uk-card-body">
+                <h3 class="uk-card-title">{{ object.title }}</h3>
+                <p>{{ object.content|slice:100 }}</p>
+                <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                    <li>Создан: {{ object.created_at }}</li>
+                    <li>Создан: {{ object.views_count }}</li>
+                </ul>
+                <a href="{% url 'blog:detail' object.pk %}" type="button" class="uk-button uk-button-default">Просмотр</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}

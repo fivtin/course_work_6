@@ -22,4 +22,11 @@ class BlogUpdateForm(BlogCreateForm):
 
     class Meta:
         model = Blog
-        fields = ("title", "content", "preview", "is_published", )
+        fields = ("title", "content", "preview", )
+
+
+class BlogManagerUpdateForm(BlogCreateForm):
+
+    class Meta:
+        model = Blog
+        fields = ('is_published', )

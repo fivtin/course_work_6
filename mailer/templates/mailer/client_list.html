@@ -1,7 +1,9 @@
 {% extends 'mailer/base.html' %}
 {% block content %}
 <h4>Список клиентов сервиса</h4>
+{% if not perms.mailer.access_manager %}
 <a href="{% url 'mailer:client_create' %}" class="uk-button uk-button-primary">Создать</a>
+{% endif %}
 <table class="uk-table uk-table-divider uk-table-striped uk-table-small">
     <caption></caption>
     <thead>
@@ -9,7 +11,9 @@
             <th>E-mail</th>
             <th>Фамилия И.О.</th>
             <th>Комментарий</th>
-            <th>Действия</th>
+
+            <th>{% if not perms.mailer.access_manager %}Действия{% else %}Автор{% endif %}</th>
+
         </tr>
     </thead>
     <tbody>
@@ -19,17 +23,20 @@
             <td>{{ object.fio }}</td>
             <td>{{ object.info }}</td>
             <td>
+                {% if not perms.mailer.access_manager %}
                 <a href="/clients/{{ object.pk }}/update"
                    class="uk-button uk-button-primary uk-button-small"
                    uk-icon="icon:  file-edit">
-
                 </a>
                 <a href="/clients/{{ object.pk }}/delete"
                    class="uk-button uk-button-danger uk-button-small"
                    uk-icon="icon: trash">
-
                 </a>
+                {% else %}
+                {{ object.owner.email }}
+                {% endif %}
             </td>
+
         </tr>
         {% endfor %}
     </tbody>

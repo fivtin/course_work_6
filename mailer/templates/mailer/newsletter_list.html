@@ -27,7 +27,10 @@
             <td>{{ object.start|date:"d.m.Y H:i:s" }}</td>
             <td>{{ object.finish|date:"d.m.Y H:i:s" }}</td>
             <td>{% with 'none ежедневно еженедельно ежемесячно' as list %} {{ list.split | index:object.frequency }}{% endwith %}</td>
-            <td>{% with 'none создана запущена завершена' as list %} {{ list.split | index:object.status }}{% endwith %}</td>
+            <td>
+                {% with 'none создана запущена завершена' as list %} {{ list.split | index:object.status }}{% endwith %}
+                {% if object.is_block %}(БЛОК){% endif %}
+            </td>
             <td>
                 <a href="/newsletters/{{ object.pk }}/update"
                    class="uk-button uk-button-primary uk-button-small"

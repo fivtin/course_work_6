@@ -2,7 +2,7 @@
 
 {% block content %}
 {% load index %}
-<h4>Список рассылок</h4>
+<h4>Статистика по рассылкам</h4>
 <table class="uk-table uk-table-divider uk-table-striped uk-table-small">
     <caption></caption>
     <thead>
@@ -14,8 +14,8 @@
             <th>Время окончания</th>
             <th>Периодичность</th>
             <th>Статус</th>
-            <th>Автор</th>
-            <th>Действия</th>
+            <th>Успешно</th>
+            <th>Неудачно</th>
         </tr>
     </thead>
     <tbody>
@@ -31,24 +31,8 @@
                 {% with 'none создана запущена завершена' as list %} {{ list.split | index:object.status }}{% endwith %}
                 {% if object.is_block %}(БЛОК){% endif %}
             </td>
-            <td>{{ object.owner.email }}</td>
-            <td>
-                <a href="/newsletters/{{ object.pk }}"
-                   class="uk-button uk-button-secondary uk-button-small"
-                   uk-icon="icon: search">
-                </a>
-                {% if object.is_block %}
-                <a href="/newsletters/{{ object.pk }}/action/unblock"
-                   class="uk-button uk-button-primary uk-button-small"
-                   uk-icon="icon: play">
-                </a>
-                {% else %}
-                <a href="/newsletters/{{ object.pk }}/action/block"
-                   class="uk-button uk-button-danger uk-button-small"
-                   uk-icon="icon: ban">
-                </a>
-                {% endif %}
-            </td>
+            <td>{{ object.success }}</td>
+            <td>{{ object.failure }}</td>
         </tr>
         {% endfor %}
     </tbody>

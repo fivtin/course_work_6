@@ -23,15 +23,17 @@ def send_mailing():
     mailings = Newsletter.objects.filter(
         status__in=[1, 2, ],
         start__lte=current_datetime,
+        is_block=False,
     )
-
     for mailing in mailings:
-        if mailing.finish > current_datetime:
+        print(mailing)
+        if mailing.finish and mailing.finish > current_datetime:
             mailing.status = 3
             mailing.save()
             continue
-        if mailing.is_block:
-            continue
+        # if mailing.is_block:
+        #     print(f'block {mailing}')
+        #     continue
         if mailing.status == 1 and current_datetime > mailing.start:
             mailing.status = 2
             mailing.save()
