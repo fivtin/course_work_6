@@ -29,14 +29,15 @@ class MessageForm(forms.ModelForm):
             field.widget.attrs['class'] = 'uk-input'
 
 
-class NewsletterForm(forms.ModelForm):
+class NewsletterCreateForm(forms.ModelForm):
 
     class Meta:
         model = Newsletter
-        fields = ("title", "start", "frequency", "message", "clients", )
+        fields = ("title", "start", "finish", "frequency", "message", "clients", )
 
         widgets = {
             'start': forms.TextInput(attrs={'type': 'datetime-local'}),
+            'finish': forms.TextInput(attrs={'type': 'datetime-local'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -45,13 +46,22 @@ class NewsletterForm(forms.ModelForm):
             # if not isinstance(field, forms.BooleanField):
             field.widget.attrs['class'] = 'uk-input'
 
+    def clean_finish(self):
+        cleaned_data = self.cleaned_data.get('finish')
+        if cleaned_data:
+            start = self.cleaned_data.get('start')
+            if start > cleaned_data:
+                raise forms.ValidationError(f'Отказано. Дата окончания рассылки раньше даты её начала.')
+        return cleaned_data
 
-class NewsletterUpdateForm(NewsletterForm):
+
+class NewsletterUpdateForm(NewsletterCreateForm):
 
     class Meta:
         model = Newsletter
-        fields = ("title", "start", "frequency", "status",  "message", "clients", )
+        fields = ("title", "start", "finish", "frequency", "status",  "message", "clients", )
 
         widgets = {
             'start': forms.TextInput(attrs={'type': 'datetime-local'}),
+            'finish': forms.TextInput(attrs={'type': 'datetime-local'}),
         }

@@ -13,7 +13,7 @@ from mailer.models import Newsletter, Attempt
 
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(send_mailing, 'interval', seconds=10)
+    scheduler.add_job(send_mailing, 'interval', seconds=60)
     scheduler.start()
 
 
@@ -21,16 +21,25 @@ def send_mailing():
     zone = pytz.timezone(settings.TIME_ZONE)
     current_datetime = datetime.now(zone)
     mailings = Newsletter.objects.filter(
-        status__in=[2, ],
+        status__in=[1, 2, ],
         start__lte=current_datetime,
-     )
+    )
 
     for mailing in mailings:
+        if mailing.finish > current_datetime:
+            mailing.status = 3
+            mailing.save()
+            continue
+        if mailing.is_block:
+            continue
+        if mailing.status == 1 and current_datetime > mailing.start:
+            mailing.status = 2
+            mailing.save()
         last_attempt = Attempt.objects.filter(newsletter=mailing, success=True).order_by('-attempt_time').first()
         if last_attempt:
             last_attempt_time = last_attempt.attempt_time
         else:
-            last_attempt_time = datetime.now(zone)  # = Attempt(newsletter=mailing, attempt_time=datetime.now(zone), )
+            last_attempt_time = datetime.now(zone)
         if mailing.frequency == 1:
             interval = timedelta(days=1)
         elif mailing.frequency == 2:
@@ -51,5 +60,5 @@ def send_mailing():
                 Attempt.objects.create(newsletter=mailing, success=True, response=server_response)
             except smtplib.SMTPException as e:
                 Attempt.objects.create(newsletter=mailing, response=e)
-            except TimeoutError as e:
-                Attempt.objects.create(newsletter=mailing, response=e)
+            # except TimeoutError as e:
+            #     Attempt.objects.create(newsletter=mailing, response=e)

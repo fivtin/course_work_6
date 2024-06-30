@@ -2,11 +2,13 @@ import string
 import secrets
 import random
 
+from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 
 from config.settings import EMAIL_HOST_USER
 from users.forms import UserRegisterForm
@@ -51,7 +53,6 @@ def email_confirm(request, token):
 
 def reset_password(request):
     if request.method == 'POST':
-        print(request)
         email = request.POST.get('email')
         user = get_object_or_404(User, email=email)
         characters = string.ascii_letters + string.digits  # + string.punctuation
@@ -71,3 +72,33 @@ def reset_password(request):
 
 def reset_password_success(request):
     return render(request, 'users/reset_password_success.html')
+
+
+class UserListView(PermissionRequiredMixin, ListView):
+    model = User
+
+    permission_required = 'users.view_list'
+
+    def get_queryset(self):
+        queryset = User.objects.filter(is_superuser=False).exclude(id=self.request.user.id)
+        return queryset
+
+
+@login_required
+@permission_required('users.change_active')
+def user_deactivate(request, id):
+    user = get_object_or_404(User, pk=id)
+
+    if not user.is_superuser:
+        user.is_active = False
+        user.save()
+    return redirect(reverse('users:list'))
+
+
+@login_required
+@permission_required('users.change_active')
+def user_activate(request, id):
+    user = get_object_or_404(User, pk=id)
+    user.is_active = True
+    user.save()
+    return redirect(reverse('users:list'))

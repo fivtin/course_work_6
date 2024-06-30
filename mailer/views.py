@@ -1,10 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Permission
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render
-from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy, reverse
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
-from mailer.forms import ClientForm, MessageForm, NewsletterForm, NewsletterUpdateForm
+from mailer.forms import ClientForm, MessageForm, NewsletterUpdateForm, NewsletterCreateForm
 from mailer.models import Client, Message, Newsletter
 
 
@@ -133,21 +134,37 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
         raise PermissionDenied
 
 
+class NewsletterDetailView(DetailView):
+
+    model = Newsletter
+
+
 class NewsletterListView(LoginRequiredMixin, ListView):
     login_url = "/users/login"
 
     model = Newsletter
 
     def get_queryset(self):
-        queryset = Newsletter.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.has_perm('mailer.set_block'):
+            queryset = Newsletter.objects.all()
+        else:
+            queryset = Newsletter.objects.filter(owner=user)
         return queryset
+
+    def get_template_names(self):
+        user = self.request.user
+        if user.has_perm('mailer.set_block'):
+            return 'mailer/newsletter_manager_list.html'
+        else:
+            return 'mailer/newsletter_list.html'
 
 
 class NewsletterCreateView(LoginRequiredMixin, CreateView):
     login_url = "/users/login"
 
     model = Newsletter
-    form_class = NewsletterForm
+    form_class = NewsletterCreateForm
     success_url = reverse_lazy('mailer:newsletter_list')
 
     def form_valid(self, form):
@@ -189,3 +206,18 @@ class NewsletterDeleteView(LoginRequiredMixin, DeleteView):
         if self.request.user == self.object.owner:
             return self.object
         raise PermissionDenied
+
+
+def action_start(request, pk):
+    newsletter = get_object_or_404(Newsletter, pk=pk)
+    newsletter.is_block = False
+    newsletter.save()
+    return redirect(reverse('mailer:newsletter_list'))
+
+
+def action_stop(request, pk):
+    newsletter = get_object_or_404(Newsletter, pk=pk)
+    newsletter.is_block = True
+    newsletter.save()
+    return redirect(reverse('mailer:newsletter_list'))
+

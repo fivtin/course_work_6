@@ -12,6 +12,7 @@
             <th>Тема сообщения</th>
             <th>Получателей</th>
             <th>Время начала</th>
+            <th>Время окончания</th>
             <th>Периодичность</th>
             <th>Статус</th>
             <th>Действия</th>
@@ -24,6 +25,7 @@
             <td>{{ object.message.subject }}</td>
             <td>{{ object.clients.all | length }}</td>
             <td>{{ object.start|date:"d.m.Y H:i:s" }}</td>
+            <td>{{ object.finish|date:"d.m.Y H:i:s" }}</td>
             <td>{% with 'none ежедневно еженедельно ежемесячно' as list %} {{ list.split | index:object.frequency }}{% endwith %}</td>
             <td>{% with 'none создана запущена завершена' as list %} {{ list.split | index:object.status }}{% endwith %}</td>
             <td>

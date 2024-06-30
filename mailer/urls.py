@@ -4,7 +4,7 @@ from django.views.decorators.cache import cache_page
 from mailer.apps import MailerConfig
 from mailer.views import index, ClientListView, ClientCreateView, ClientUpdateView, ClientDeleteView, MessageListView, \
     MessageCreateView, MessageUpdateView, MessageDeleteView, NewsletterListView, NewsletterCreateView, \
-    NewsletterUpdateView, NewsletterDeleteView
+    NewsletterUpdateView, NewsletterDeleteView, NewsletterDetailView, action_start, action_stop
 
 app_name = MailerConfig.name
 
@@ -19,9 +19,12 @@ urlpatterns = [
     path('messages/<int:pk>/update', MessageUpdateView.as_view(), name='message_update'),
     path('messages/<int:pk>/delete', MessageDeleteView.as_view(), name='message_delete'),
     path('newsletters', NewsletterListView.as_view(), name='newsletter_list'),
+    path('newsletters/<int:pk>', NewsletterDetailView.as_view(), name='newsletter_detail'),
     path('newsletters/create', NewsletterCreateView.as_view(), name='newsletter_create'),
     path('newsletters/<int:pk>/update', NewsletterUpdateView.as_view(), name='newsletter_update'),
     path('newsletters/<int:pk>/delete', NewsletterDeleteView.as_view(), name='newsletter_delete'),
+    path('newsletters/<int:pk>/action/unblock', action_start, name='newsletter_unblock'),
+    path('newsletters/<int:pk>/action/block', action_stop, name='newsletter_block'),
     # path('product/<int:pk>', cache_page(60)(ProductDetailView.as_view()), name='product_detail'),
     # path('contacts/', ContactsTemplateView.as_view(), name='contacts'),
 ]

@@ -50,16 +50,22 @@ class Newsletter(models.Model):
     }
     title = models.CharField(max_length=128, verbose_name='название')
     start = models.DateTimeField(verbose_name='время начала')
-    # finish = models.DateTimeField(verbose_name='время окончания')
+    finish = models.DateTimeField(verbose_name='время окончания', **NULLABLE)
     frequency = models.PositiveSmallIntegerField(choices=FREQUENCY_CHOICES, default=1, verbose_name='периодичность')
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1, verbose_name='статус')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='сообщение')
     clients = models.ManyToManyField(Client, verbose_name='получатели')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, **NULLABLE, verbose_name='владелец')
+    is_block = models.BooleanField(default=False, verbose_name="заблокировано")
 
     class Meta:
         verbose_name = 'рассылка'
         verbose_name_plural = 'рассылки'
+
+        permissions = [
+            ('set_block', 'Can enable / disable newsletter'),
+            ('access_manager', 'Manager access to the newsletter'),
+        ]
 
     def __str__(self):
         return f'{self.title}({self.status}): {self.start}-{self.frequency}'
