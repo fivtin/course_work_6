@@ -4,8 +4,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from mailer.forms import ClientForm, MessageForm
-from mailer.models import Client, Message
+from mailer.forms import ClientForm, MessageForm, NewsletterForm, NewsletterUpdateForm
+from mailer.models import Client, Message, Newsletter
 
 
 # Create your views here.
@@ -125,6 +125,64 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
 
     model = Message
     success_url = reverse_lazy('mailer:message_list')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner:
+            return self.object
+        raise PermissionDenied
+
+
+class NewsletterListView(LoginRequiredMixin, ListView):
+    login_url = "/users/login"
+
+    model = Newsletter
+
+    def get_queryset(self):
+        queryset = Newsletter.objects.filter(owner=self.request.user)
+        return queryset
+
+
+class NewsletterCreateView(LoginRequiredMixin, CreateView):
+    login_url = "/users/login"
+
+    model = Newsletter
+    form_class = NewsletterForm
+    success_url = reverse_lazy('mailer:newsletter_list')
+
+    def form_valid(self, form):
+        newsletter = form.save()
+        newsletter.owner = self.request.user
+        newsletter.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['form'].fields['clients'].queryset = Client.objects.filter(owner=self.request.user)
+        return context_data
+
+
+class NewsletterUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = "/users/login"
+
+    model = Newsletter
+    form_class = NewsletterUpdateForm
+    success_url = reverse_lazy('mailer:newsletter_list')
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        # for obj in context_data['object_list']:
+        #     current_version = Version.objects.filter(product_id=obj.pk, is_current=True).first()
+        #     obj.version = current_version
+        context_data['form'].fields['clients'].queryset = Client.objects.filter(owner=self.request.user)
+        return context_data
+
+
+class NewsletterDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = "/users/login"
+
+    model = Newsletter
+    success_url = reverse_lazy('mailer:newsletter_list')
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)

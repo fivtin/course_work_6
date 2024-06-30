@@ -50,11 +50,11 @@ class Newsletter(models.Model):
     }
     title = models.CharField(max_length=128, verbose_name='название')
     start = models.DateTimeField(verbose_name='время начала')
-    finish = models.DateTimeField(verbose_name='время окончания')
+    # finish = models.DateTimeField(verbose_name='время окончания')
     frequency = models.PositiveSmallIntegerField(choices=FREQUENCY_CHOICES, default=1, verbose_name='периодичность')
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1, verbose_name='статус')
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, **NULLABLE)
-    clients = models.ManyToManyField(Client)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='сообщение')
+    clients = models.ManyToManyField(Client, verbose_name='получатели')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, **NULLABLE, verbose_name='владелец')
 
     class Meta:

@@ -1,0 +1,18 @@
+{% extends 'mailer/base.html' %}
+{% load media %}
+{% block content %}
+    <div class="row text-center">
+        <h2>Редактирование блога {{ object.title }}</h2>
+        <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if object %}
+        <button type="submit" class="uk-button uk-button-primary">Сохранить</button>
+        {% else %}
+        <button type="submit" class="uk-button uk-button-primary">Создать</button>
+        {% endif %}
+        <a href="{% url 'blog:list' %}" type="button" class="uk-button uk-button-danger">Отмена</a>
+        </form>
+    </div>
+{% endblock %}
+{% block banner %}{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'mailer/base.html' %}
+{% load media %}
+{% block content %}
+<h4>Список блогов</h4>
+<a href="{% url 'blog:create' %}" class="uk-button uk-button-primary uk-margin-bottom">Создать</a>
+<div class="uk-child-width-1-2@m" uk-grid>
+    {% for object in object_list %}
+    <div>
+        <div class="uk-card uk-card-default">
+            {% if object.preview %}
+            <div class="uk-card-media-top">
+                <img class="uk-align-center uk-height-medium" src="{% url_media_tag object.preview %}" alt="">
+            </div>
+            {% endif %}
+            <div class="uk-card-body">
+                <h3 class="uk-card-title">{{ object.title }}</h3>
+                <p>{{ object.content|slice:100 }}</p>
+                <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                    <li>Создан: {{ object.created_at }}</li>
+                </ul>
+                    {% if object.is_published %}
+                    <h5>Опубликовано</h5>
+                    {% else %}
+                    <h5>НеОпубликовано</h5>
+                    {% endif %}
+                <a href="{% url 'blog:detail' object.pk %}" type="button" class="uk-button uk-button-default">Просмотр</a>
+                    <a href="{% url 'blog:update' object.pk %}" type="button" class="uk-button uk-button-primary">Изменить</a>
+                    <a href="{% url 'blog:delete' object.pk %}" type="button" class="uk-button uk-button-danger">Удалить</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

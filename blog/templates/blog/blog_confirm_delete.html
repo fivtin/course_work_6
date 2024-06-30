@@ -1,0 +1,9 @@
+{% extends 'mailer/base.html' %}
+{% block content %}
+<h4 class="uk-text-danger">Вы действительно хотите улалить блог: <strong>{{ object.title }}</strong> ?</h4>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="uk-button uk-button-danger">Удалить</button>
+    <a href="{% url 'blog:list' %}" class="uk-button  uk-button-secondary">Отмена</a>
+</form>
+{% endblock %}

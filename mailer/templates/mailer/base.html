@@ -15,35 +15,36 @@
     <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
         <nav class="uk-navbar-container">
             <div class="uk-container" uk-navbar>
-                {% if user.is_authenticated %}
                 <div class="uk-navbar-left">
                     <ul class="uk-navbar-nav">
+                        {% if user.is_authenticated %}
                         <li><a href="{% url 'mailer:client_list' %}">Клиенты</a>
-                            <div class="uk-navbar-dropdown">
-                                <ul class="uk-nav uk-navbar-dropdown-nav">
-                                    <li><a href="{% url 'mailer:client_create' %}">Добавить</a></li>
-                                </ul>
-                            </div>
+<!--                            <div class="uk-navbar-dropdown">-->
+<!--                                <ul class="uk-nav uk-navbar-dropdown-nav">-->
+<!--                                    <li><a href="{% url 'mailer:client_create' %}">Добавить</a></li>-->
+<!--                                </ul>-->
+<!--                            </div>-->
                         </li>
                         <li><a href="{% url 'mailer:message_list' %}">Сообщения</a>
-                            <div class="uk-navbar-dropdown">
-                                <ul class="uk-nav uk-navbar-dropdown-nav">
-                                    <li><a href="{% url 'mailer:message_create' %}">Добавить</a></li>
-                                </ul>
-                            </div>
+<!--                            <div class="uk-navbar-dropdown">-->
+<!--                                <ul class="uk-nav uk-navbar-dropdown-nav">-->
+<!--                                    <li><a href="{% url 'mailer:message_create' %}">Добавить</a></li>-->
+<!--                                </ul>-->
+<!--                            </div>-->
                         </li>
-                        <li><a href="">Рассылки</a>
-                            <div class="uk-navbar-dropdown">
-                                <ul class="uk-nav uk-navbar-dropdown-nav">
-                                    <li><a href="#">Список</a></li>
-                                    <li><a href="#">Добавить</a></li>
-                                </ul>
-                            </div>
+                        <li><a href="{% url 'mailer:newsletter_list' %}">Рассылки</a>
+<!--                            <div class="uk-navbar-dropdown">-->
+<!--                                <ul class="uk-nav uk-navbar-dropdown-nav">-->
+<!--                                    <li><a href="{% url 'mailer:newsletter_create' %}">Добавить</a></li>-->
+<!--                                </ul>-->
+<!--                            </div>-->
                         </li>
                         <li><a href="">Статистика</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'blog:list' %}">Блог</a></li>
                     </ul>
                 </div>
-                {% endif %}
+
                 <div class="uk-navbar-right">
                     <ul class="uk-navbar-nav">
                         {% if user.is_authenticated %}

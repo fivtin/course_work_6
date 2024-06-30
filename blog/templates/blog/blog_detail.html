@@ -1,0 +1,31 @@
+{% extends 'mailer/base.html' %}
+{% load media %}
+{% block content %}
+    <div class="row text-center">
+        <h2>Информация о блоге</h2>
+        <div class="col-6">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">{{ object.title }}</h4>
+                </div>
+                <div class="card-body">
+                    {% if object.preview %}
+                    <img src="{% url_media_tag object.preview %}" width="100%" />
+                    {% endif %}
+                    <p>{{ object.content }}</p>
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>Создан: {{ object.created_at }}</li>
+                        <li>Просмотров: {{ object.views_count }}</li>
+                    </ul>
+                    {% if object.is_published %}
+                    <h5>Опубликовано</h5>
+                    {% else %}
+                    <h5>НеОпубликовано</h5>
+                    {% endif %}
+                    <a href="{% url 'blog:list' %}" type="button" class="uk-button uk-button-primary">Закрыть</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block banner %}{% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'mailer/base.html' %}
 {% block content %}
-<h4>Добавить клиента, получателя рассылки</h4>
+<h4>Добавить рассылку</h4>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
@@ -9,6 +9,6 @@
     {% else %}
     <button type="submit" class="uk-button uk-button-primary">Создать</button>
     {% endif %}
-    <a href="{% url 'mailer:client_list' %}" class="uk-button  uk-button-secondary">Отмена</a>
+    <a href="{% url 'mailer:newsletter_list' %}" class="uk-button  uk-button-secondary">Отмена</a>
 </form>
 {% endblock %}
