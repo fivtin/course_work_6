@@ -1,0 +1,41 @@
+{% extends 'mailer/base.html' %}
+
+{% block content %}
+{% load index %}
+<h4>Информация о рассылке</h4>
+<table class="uk-table uk-table-divider uk-table-striped uk-table-small">
+    <caption></caption>
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Тема сообщения</th>
+            <th>Получателей</th>
+            <th>Время начала</th>
+            <th>Периодичность</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ object.title }}</td>
+            <td>{{ object.message.subject }}</td>
+            <td>{{ object.clients.all | length }}</td>
+            <td>{{ object.start|date:"d.m.Y H:i:s" }}</td>
+            <td>{% with 'none ежедневно еженедельно ежемесячно' as list %} {{ list.split | index:object.frequency }}{% endwith %}</td>
+            <td>{% with 'none создана запущена завершена' as list %} {{ list.split | index:object.status }}{% endwith %}</td>
+            <td>
+<!--                <a href="/newsletters/{{ object.pk }}/update"-->
+<!--                   class="uk-button uk-button-primary uk-button-small"-->
+<!--                   uk-icon="icon:  file-edit">-->
+<!--                </a>-->
+<!--                <a href="/newsletters/{{ object.pk }}/delete"-->
+<!--                   class="uk-button uk-button-danger uk-button-small"-->
+<!--                   uk-icon="icon: trash">-->
+<!--                </a>-->
+            </td>
+        </tr>
+    </tbody>
+ </table>
+<a href="{% url 'mailer:newsletter_list' %}" class="uk-button  uk-button-secondary">Назад</a>
+{% endblock %}

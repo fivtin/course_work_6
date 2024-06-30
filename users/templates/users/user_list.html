@@ -1,0 +1,38 @@
+{% extends 'mailer/base.html' %}
+{% block content %}
+<h4>Список пользователей</h4>
+<table class="uk-table uk-table-divider uk-table-striped uk-table-small">
+    <thead>
+        <tr>
+            <th>E-mail</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td>{{ object.email }}</td>
+            {% if object.is_active %}
+            <td><span class="uk-text-primary" uk-icon="icon: unlock"></span></td>
+            <td>
+                <a href="/users/{{ object.pk }}/deactivate"
+                class="uk-button uk-button-danger uk-button-small"
+                uk-icon="icon: lock">
+                </a>
+            <td>
+            {% else %}
+            <td><span class="uk-text-danger" uk-icon="icon: lock"></span></td>
+            <td>
+            <a href="/users/{{ object.pk }}/activate"
+                class="uk-button uk-button-primary uk-button-small"
+                uk-icon="icon: unlock">
+            </a>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'mailer:main_page' %}" class="uk-button  uk-button-secondary">Назад</a>
+{% endblock %}
