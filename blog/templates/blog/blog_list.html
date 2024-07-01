@@ -28,9 +28,13 @@
                     <li>Просмотров: {{ object.views_count }}</li>
                 </ul>
                 <a href="{% url 'blog:detail' object.pk %}" type="button" class="uk-button uk-button-default">Просмотр</a>
+                {% if user.is_authenticated %}
+                {% if user == object.owner or pers.mailer.access_manager %}
                 <a href="{% url 'blog:update' object.pk %}" type="button" class="uk-button uk-button-primary">Изменить</a>
-                {% if user.is_authenticated and user == object.owner %}
+                {% endif %}
+                {% if user == object.owner %}
                 <a href="{% url 'blog:delete' object.pk %}" type="button" class="uk-button uk-button-danger">Удалить</a>
+                {% endif %}
                 {% endif %}
 
             </div>

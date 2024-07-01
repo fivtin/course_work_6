@@ -12,7 +12,6 @@ class ClientForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            # if not isinstance(field, forms.BooleanField):
             field.widget.attrs['class'] = 'uk-input'
 
 
@@ -25,7 +24,6 @@ class MessageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            # if not isinstance(field, forms.BooleanField):
             field.widget.attrs['class'] = 'uk-input'
 
 
@@ -43,7 +41,6 @@ class NewsletterCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            # if not isinstance(field, forms.BooleanField):
             field.widget.attrs['class'] = 'uk-input'
 
     def clean_finish(self):

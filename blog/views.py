@@ -17,11 +17,7 @@ class BlogListView(ListView):
     model = Blog
 
     def get_queryset(self, *args, **kwargs):
-        user = self.request.user
-        if user.has_perm('mailer.access_manager'):
-            queryset = Blog.objects.all()
-        else:
-            queryset = Blog.objects.filter(owner=user)
+        queryset = Blog.objects.all()
         return queryset
 
 
@@ -39,7 +35,6 @@ class BlogCreateView(LoginRequiredMixin, CreateView):
     login_url = '/users/login'
 
     model = Blog
-    # fields = ('title', 'content', 'preview', )
     form_class = BlogCreateForm
     success_url = reverse_lazy('blog:list')
 
@@ -49,7 +44,6 @@ class BlogCreateView(LoginRequiredMixin, CreateView):
             new_blog.slug = slugify(new_blog.title)
             new_blog.owner = self.request.user
             new_blog.save()
-
         return super().form_valid(form)
 
 
@@ -58,7 +52,6 @@ class BlogUpdateView(LoginRequiredMixin, UpdateView):
 
     model = Blog
     form_class = BlogUpdateForm
-    # fields = ('title', 'content', 'preview', 'is_published', )
 
     def form_valid(self, form):
         if form.is_valid():

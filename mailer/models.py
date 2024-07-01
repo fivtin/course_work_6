@@ -17,7 +17,6 @@ class Client(models.Model):
     class Meta:
         verbose_name = 'клиент'
         verbose_name_plural = 'клиенты'
-        # ordering = ('id',)
 
     def __str__(self):
         return f'{self.email} ({self.fio})'
@@ -71,22 +70,15 @@ class Newsletter(models.Model):
         return f'{self.title}({self.status}): {self.start}-{self.frequency}'
 
 
-class Recipient(models.Model):
-    newsletter = models.ForeignKey(Newsletter, on_delete=models.CASCADE, verbose_name='рассылка')
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='клиент')
-
-    class Meta:
-        verbose_name = 'получатель'
-        verbose_name_plural = 'получатели'
-
-    def __str__(self):
-        return f'{self.newsletter.title}: {self.client.email}'
-
-
 class Attempt(models.Model):
     newsletter = models.ForeignKey(Newsletter, on_delete=models.CASCADE, **NULLABLE, verbose_name='рассылка')
     attempt_time = models.DateTimeField(auto_now_add=True, verbose_name='время попытки')
     success = models.BooleanField(default=False, verbose_name='успешно')
     response = models.TextField(verbose_name='ответ сервера')
+
+    class Meta:
+        verbose_name = 'попытка'
+        verbose_name_plural = 'попытки'
+
 
 
