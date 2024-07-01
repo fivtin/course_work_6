@@ -10,6 +10,11 @@ class UserRegisterForm(UserCreationForm):
         model = User
         fields = ('email', 'first_name', 'password1', 'password2', )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'uk-input'
+
 
 class UserProfileForm(UserChangeForm):
     class Meta:
