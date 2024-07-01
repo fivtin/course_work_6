@@ -7,10 +7,10 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, UpdateView
 
 from config.settings import EMAIL_HOST_USER
-from users.forms import UserRegisterForm
+from users.forms import UserRegisterForm, UserProfileForm
 from users.models import User
 
 
@@ -101,3 +101,16 @@ def user_activate(request, id):
     user.is_active = True
     user.save()
     return redirect(reverse('users:list'))
+
+
+class LoginPermissionMixin:
+    pass
+
+
+class UserProfileView(LoginPermissionMixin, UpdateView):
+    model = User
+    form_class = UserProfileForm
+    success_url = reverse_lazy('mailer:main_page')
+
+    def get_object(self, queryset=None):
+        return self.request.user
